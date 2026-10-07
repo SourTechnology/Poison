@@ -1,0 +1,1049 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11100f">
+  <title>Poison — Your social directory</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #11100f;
+      --panel: #191816;
+      --panel-hover: #211f1c;
+      --red: #ff7068;
+      --lime: #d9ff70;
+      --mint: #8ef0c2;
+      --white: #f7f5ef;
+      --muted: #a6a195;
+      --line: rgba(255,255,255,.12);
+    }
+
+    * { box-sizing: border-box }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--white);
+      background:
+        radial-gradient(ellipse at 88% 0%, #ff70680e, transparent 32rem),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    }
+
+    button, input { font: inherit }
+    button { color: inherit }
+
+    [hidden] { display: none !important }
+
+    .page {
+      width: min(1120px, calc(100% - 32px));
+      min-height: 100vh;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 37px;
+      height: 37px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: #20110f;
+      background: var(--red);
+      font-size: 1.2rem;
+      font-weight: 1000;
+    }
+
+    .brand-name {
+      margin: 0;
+      font-weight: 950;
+      letter-spacing: -.05em;
+    }
+
+    .brand-name span { color: var(--red) }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: .72rem;
+    }
+
+    .user-label {
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .logout-button {
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: .7rem;
+      font-weight: 800;
+    }
+
+    .logout-button:hover { color: var(--white); border-color: #ffffff55 }
+
+    main { flex: 1; padding: 36px 0 42px }
+
+    /* Login/signup */
+    .auth-layout {
+      width: min(900px, 100%);
+      min-height: calc(100vh - 155px);
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr 390px;
+      align-items: center;
+      gap: clamp(30px, 7vw, 75px);
+    }
+
+    .auth-brand { margin-bottom: 42px }
+
+    .eyebrow {
+      color: var(--red);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .auth-pitch h1 {
+      margin: 11px 0;
+      font-size: clamp(2.7rem, 7vw, 4.5rem);
+      line-height: .96;
+      letter-spacing: -.08em;
+    }
+
+    .auth-pitch h1 span { color: var(--red) }
+
+    .auth-pitch > p {
+      max-width: 440px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: .88rem;
+    }
+
+    .auth-card {
+      padding: 25px;
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      background: linear-gradient(145deg, #ffffff0b, #ffffff03);
+      box-shadow: 0 25px 80px #0005;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      margin-bottom: 23px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #0003;
+    }
+
+    .tab {
+      min-height: 37px;
+      border: 0;
+      border-radius: 7px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: .76rem;
+      font-weight: 800;
+    }
+
+    .tab.active { color: var(--white); background: #ffffff12 }
+
+    .auth-card h2 {
+      margin: 0;
+      font-size: 1.3rem;
+      letter-spacing: -.04em;
+    }
+
+    .auth-subtitle {
+      margin: 6px 0 18px;
+      color: var(--muted);
+      font-size: .74rem;
+    }
+
+    .field { margin-bottom: 13px }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      color: #dedbd2;
+      font-size: .7rem;
+      font-weight: 750;
+    }
+
+    .field input {
+      width: 100%;
+      height: 42px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      outline: none;
+      color: var(--white);
+      background: #11100f;
+      font-size: .78rem;
+    }
+
+    .field input:focus,
+    .search:focus { border-color: var(--red) }
+
+    .primary-button {
+      width: 100%;
+      min-height: 43px;
+      margin-top: 3px;
+      border: 0;
+      border-radius: 9px;
+      color: #20110f;
+      background: var(--red);
+      cursor: pointer;
+      font-size: .78rem;
+      font-weight: 950;
+    }
+
+    .primary-button:hover { filter: brightness(1.08) }
+
+    .auth-message {
+      min-height: 18px;
+      margin: 10px 0 0;
+      color: var(--red);
+      font-size: .7rem;
+      line-height: 1.5;
+    }
+
+    .demo-note {
+      margin: 13px 0 0;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .64rem;
+      line-height: 1.55;
+    }
+
+    /* Poison directory */
+    .hero {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 27px;
+    }
+
+    .hero h1 {
+      margin: 9px 0 8px;
+      font-size: clamp(2.6rem, 8vw, 4.6rem);
+      line-height: .95;
+      letter-spacing: -.08em;
+    }
+
+    .hero h1 span { color: var(--red) }
+
+    .hero p {
+      max-width: 570px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .hero-stat {
+      flex: 0 0 auto;
+      padding: 12px 15px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      color: var(--muted);
+      font-size: .72rem;
+    }
+
+    .hero-stat strong { color: var(--white) }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .search {
+      width: min(340px, 100%);
+      height: 42px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      outline: none;
+      color: var(--white);
+      background: var(--panel);
+      font-size: .78rem;
+    }
+
+    .add-button {
+      min-height: 42px;
+      padding: 0 15px;
+      border: 0;
+      border-radius: 10px;
+      color: #20110f;
+      background: var(--red);
+      cursor: pointer;
+      font-size: .76rem;
+      font-weight: 900;
+    }
+
+    .add-button:hover { filter: brightness(1.08) }
+
+    .directory-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 24px 0 12px;
+    }
+
+    .directory-heading h2 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: -.03em;
+    }
+
+    .directory-heading span {
+      color: var(--muted);
+      font-size: .72rem;
+    }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .service-card {
+      min-width: 0;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: linear-gradient(145deg, #ffffff09, #ffffff03);
+      transition: border-color .16s, transform .16s, background .16s;
+    }
+
+    .service-card:hover {
+      transform: translateY(-2px);
+      border-color: #ff70685c;
+      background: var(--panel-hover);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .service-icon {
+      width: 43px;
+      height: 43px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      color: #171511;
+      background: var(--lime);
+      font-size: .9rem;
+      font-weight: 950;
+    }
+
+    .service-card:nth-child(3n + 2) .service-icon { background: var(--mint) }
+    .service-card:nth-child(3n) .service-icon { background: #c5a8ff }
+
+    .service-info { min-width: 0; flex: 1 }
+
+    .service-info h3 {
+      overflow: hidden;
+      margin: 0;
+      font-size: .86rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .service-info p {
+      overflow: hidden;
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: .69rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .profile-url {
+      overflow: hidden;
+      margin: 14px 0;
+      color: #d8d5cc;
+      font-size: .72rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .open-link {
+      min-height: 33px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 11px;
+      border-radius: 8px;
+      color: #20110f;
+      background: var(--lime);
+      font-size: .69rem;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .open-link:hover { filter: brightness(1.08) }
+
+    .remove-button {
+      min-height: 32px;
+      padding: 0 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: .67rem;
+    }
+
+    .remove-button:hover { color: var(--red); border-color: #ff706860 }
+
+    .empty {
+      grid-column: 1 / -1;
+      padding: 38px 20px;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .empty strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--white);
+    }
+
+    .privacy-note {
+      margin: 22px 0 0;
+      padding: 13px 15px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--muted);
+      background: #ffffff04;
+      font-size: .69rem;
+      line-height: 1.6;
+    }
+
+    footer {
+      padding: 16px 0 20px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .68rem;
+      text-align: center;
+    }
+
+    footer strong { color: var(--red) }
+
+    dialog {
+      width: min(440px, calc(100% - 26px));
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      color: var(--white);
+      background: #191816;
+      box-shadow: 0 24px 80px #0009;
+    }
+
+    dialog::backdrop { background: #0009; backdrop-filter: blur(4px) }
+
+    .dialog-inner { padding: 21px }
+
+    .dialog-heading {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 17px;
+    }
+
+    .dialog-heading h2 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .dialog-heading p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: .72rem;
+      line-height: 1.5;
+    }
+
+    .close-button {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: end;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .cancel-button,
+    .save-button {
+      min-height: 37px;
+      padding: 0 13px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: .73rem;
+      font-weight: 850;
+    }
+
+    .cancel-button {
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: transparent;
+    }
+
+    .save-button {
+      border: 0;
+      color: #20110f;
+      background: var(--red);
+    }
+
+    .form-error {
+      min-height: 16px;
+      margin: 8px 0 0;
+      color: var(--red);
+      font-size: .69rem;
+    }
+
+    @media (max-width: 760px) {
+      .auth-layout { max-width: 430px; grid-template-columns: 1fr; gap: 25px }
+      .auth-brand { margin-bottom: 23px }
+      .auth-pitch > p { display: none }
+      .auth-pitch h1 { font-size: clamp(2.5rem, 12vw, 3.5rem) }
+      .service-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+      .hero { align-items: start; flex-direction: column }
+      .hero-stat { display: none }
+    }
+
+    @media (max-width: 520px) {
+      .page { width: calc(100% - 22px) }
+      main { padding-top: 25px }
+      .header-right { gap: 7px }
+      .user-label { max-width: 115px }
+      .toolbar { align-items: stretch; flex-direction: column }
+      .search, .add-button { width: 100% }
+      .service-grid { grid-template-columns: 1fr }
+      .service-card { padding: 14px }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: .01ms !important }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header>
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">P</div>
+        <p class="brand-name">Poison <span>Directory</span></p>
+      </div>
+      <div id="headerRight" class="header-right" hidden>
+        <span id="userLabel" class="user-label"></span>
+        <button id="logoutButton" class="logout-button" type="button">Log out</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="authScreen" class="auth-layout">
+        <div class="auth-pitch">
+          <div class="auth-brand">
+            <div class="eyebrow">Your social, in one place</div>
+            <h1>Less scrolling.<br><span>More connecting.</span></h1>
+            <p>Sign in to Poison to keep your social profiles together and quickly open the services you use.</p>
+          </div>
+        </div>
+
+        <section class="auth-card" aria-label="Account access">
+          <div class="tabs" role="tablist" aria-label="Account options">
+            <button id="loginTab" class="tab active" type="button" role="tab" aria-selected="true">Log in</button>
+            <button id="signupTab" class="tab" type="button" role="tab" aria-selected="false">Sign up</button>
+          </div>
+
+          <h2 id="authTitle">Welcome back</h2>
+          <p id="authSubtitle" class="auth-subtitle">Log in to your Poison directory.</p>
+
+          <form id="authForm">
+            <div id="nameField" class="field" hidden>
+              <label for="displayName">Your name</label>
+              <input id="displayName" name="displayName" autocomplete="name" maxlength="60">
+            </div>
+
+            <div class="field">
+              <label for="email">Email address</label>
+              <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+            </div>
+
+            <div class="field">
+              <label for="password">Password</label>
+              <input id="password" name="password" type="password" autocomplete="current-password" minlength="8" placeholder="At least 8 characters" required>
+            </div>
+
+            <button id="authSubmit" class="primary-button" type="submit">Log in</button>
+            <p id="authMessage" class="auth-message" role="status" aria-live="polite"></p>
+          </form>
+
+          <p class="demo-note">
+            Demo only: account data is stored in this browser and is not secure.
+            Don’t use a real password. Production authentication needs a secure backend.
+          </p>
+        </section>
+      </section>
+
+      <section id="poisonScreen" hidden>
+        <section class="hero">
+          <div>
+            <div class="eyebrow">Your social, in one place</div>
+            <h1>Less scrolling.<br><span>More connecting.</span></h1>
+            <p>Your personal directory for social profiles. Keep your links together and jump straight to the services you use.</p>
+          </div>
+          <div class="hero-stat"><strong id="profileCount">0</strong> profiles in your directory</div>
+        </section>
+
+        <section aria-label="Social profile directory">
+          <div class="toolbar">
+            <input id="searchInput" class="search" type="search" placeholder="Search services or usernames…" aria-label="Search profiles">
+            <button id="addProfileButton" class="add-button" type="button">+ Add a profile</button>
+          </div>
+
+          <div class="directory-heading">
+            <h2>Your directory</h2>
+            <span id="resultCount"></span>
+          </div>
+
+          <div id="serviceGrid" class="service-grid"></div>
+        </section>
+
+        <p class="privacy-note">
+          <strong>Privacy:</strong> This prototype does not connect to social accounts or ask for their passwords.
+          Profile links are saved in this browser only. Sign in to social platforms through their official websites.
+        </p>
+      </section>
+    </main>
+
+    <footer><strong>Poison</strong> · Your social links, organized</footer>
+  </div>
+
+  <dialog id="profileDialog">
+    <form id="profileForm" class="dialog-inner">
+      <div class="dialog-heading">
+        <div>
+          <h2>Add a profile</h2>
+          <p>Save a link to one of your social profiles. Never enter your social password here.</p>
+        </div>
+        <button id="closeDialogButton" class="close-button" type="button" aria-label="Close">×</button>
+      </div>
+
+      <div class="field">
+        <label for="serviceName">Service</label>
+        <input id="serviceName" name="serviceName" maxlength="40" placeholder="e.g. Instagram" required>
+      </div>
+
+      <div class="field">
+        <label for="username">Username or label</label>
+        <input id="username" name="username" maxlength="60" placeholder="e.g. @yourname" required>
+      </div>
+
+      <div class="field">
+        <label for="profileUrl">Profile URL</label>
+        <input id="profileUrl" name="profileUrl" type="url" placeholder="https://example.com/yourname" required>
+      </div>
+
+      <p id="profileError" class="form-error" role="alert"></p>
+
+      <div class="dialog-actions">
+        <button id="cancelDialogButton" class="cancel-button" type="button">Cancel</button>
+        <button class="save-button" type="submit">Save profile</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    /*
+      Front-end prototype only.
+      Passwords are stored locally for demonstration and are NOT secure.
+      Use a trusted authentication provider/backend for real accounts.
+    */
+    const USERS_KEY = "poison-demo-users-v1";
+    const SESSION_KEY = "poison-demo-session-v1";
+    const PROFILES_KEY_PREFIX = "poison-profiles-v1:";
+
+    const starterProfiles = [
+      { id: "instagram", service: "Instagram", username: "@yourname", url: "https://www.instagram.com/" },
+      { id: "youtube", service: "YouTube", username: "Your channel", url: "https://www.youtube.com/" },
+      { id: "tiktok", service: "TikTok", username: "@yourname", url: "https://www.tiktok.com/" },
+      { id: "x", service: "X", username: "@yourname", url: "https://x.com/" }
+    ];
+
+    const authScreen = document.getElementById("authScreen");
+    const poisonScreen = document.getElementById("poisonScreen");
+    const authForm = document.getElementById("authForm");
+    const authMessage = document.getElementById("authMessage");
+    const nameField = document.getElementById("nameField");
+    const displayNameInput = document.getElementById("displayName");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const profileDialog = document.getElementById("profileDialog");
+    const profileForm = document.getElementById("profileForm");
+    const serviceGrid = document.getElementById("serviceGrid");
+    const searchInput = document.getElementById("searchInput");
+
+    let authMode = "login";
+    let currentUser = null;
+    let profiles = [];
+
+    function readUsers() {
+      try {
+        const users = JSON.parse(localStorage.getItem(USERS_KEY) || "[]");
+        return Array.isArray(users) ? users : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function readProfiles(email) {
+      try {
+        const saved = localStorage.getItem(PROFILES_KEY_PREFIX + email);
+        if (saved === null) return starterProfiles.map(profile => ({ ...profile }));
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return starterProfiles.map(profile => ({ ...profile }));
+      }
+    }
+
+    function saveProfiles() {
+      try {
+        localStorage.setItem(PROFILES_KEY_PREFIX + currentUser.email, JSON.stringify(profiles));
+      } catch {
+        alert("Could not save profiles. Browser storage may be unavailable or full.");
+      }
+    }
+
+    function setAuthMode(mode) {
+      authMode = mode;
+      const signup = mode === "signup";
+
+      document.getElementById("loginTab").classList.toggle("active", !signup);
+      document.getElementById("signupTab").classList.toggle("active", signup);
+      document.getElementById("loginTab").setAttribute("aria-selected", String(!signup));
+      document.getElementById("signupTab").setAttribute("aria-selected", String(signup));
+
+      nameField.hidden = !signup;
+      displayNameInput.required = signup;
+      passwordInput.autocomplete = signup ? "new-password" : "current-password";
+      document.getElementById("authTitle").textContent = signup ? "Create your account" : "Welcome back";
+      document.getElementById("authSubtitle").textContent = signup
+        ? "Set up your Poison directory."
+        : "Log in to your Poison directory.";
+      document.getElementById("authSubmit").textContent = signup ? "Create account" : "Log in";
+      authMessage.textContent = "";
+    }
+
+    function enterPoison(user) {
+      currentUser = user;
+      profiles = readProfiles(user.email);
+
+      authScreen.hidden = true;
+      poisonScreen.hidden = false;
+      document.getElementById("headerRight").hidden = false;
+      document.getElementById("userLabel").textContent = user.name || user.email;
+      document.getElementById("userLabel").title = user.email;
+
+      searchInput.value = "";
+      renderProfiles();
+    }
+
+    function logOut() {
+      try {
+        localStorage.removeItem(SESSION_KEY);
+      } catch {
+        // Still return to the login screen if storage is unavailable.
+      }
+
+      currentUser = null;
+      profiles = [];
+      poisonScreen.hidden = true;
+      authScreen.hidden = false;
+      document.getElementById("headerRight").hidden = true;
+      authForm.reset();
+      setAuthMode("login");
+    }
+
+    function safeHttpUrl(value) {
+      try {
+        const url = new URL(value);
+        return url.protocol === "https:" || url.protocol === "http:" ? url.href : null;
+      } catch {
+        return null;
+      }
+    }
+
+    function iconFor(service) {
+      return (service.trim().replace(/[^a-z0-9]/gi, "").slice(0, 2) || "↗").toUpperCase();
+    }
+
+    function renderProfiles() {
+      if (!currentUser) return;
+
+      const query = searchInput.value.trim().toLowerCase();
+      const visible = profiles.filter(profile =>
+        `${profile.service} ${profile.username} ${profile.url}`.toLowerCase().includes(query)
+      );
+
+      serviceGrid.replaceChildren();
+      document.getElementById("profileCount").textContent = profiles.length;
+      document.getElementById("resultCount").textContent =
+        `${visible.length} ${visible.length === 1 ? "profile" : "profiles"}`;
+
+      if (!visible.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+
+        const title = document.createElement("strong");
+        title.textContent = profiles.length ? "No profiles found" : "Your directory is empty";
+
+        const detail = document.createElement("span");
+        detail.textContent = profiles.length
+          ? "Try a different search."
+          : "Add a profile to keep your social links together.";
+
+        empty.append(title, detail);
+        serviceGrid.appendChild(empty);
+        return;
+      }
+
+      visible.forEach(profile => {
+        const card = document.createElement("article");
+        card.className = "service-card";
+
+        const top = document.createElement("div");
+        top.className = "card-top";
+
+        const icon = document.createElement("div");
+        icon.className = "service-icon";
+        icon.setAttribute("aria-hidden", "true");
+        icon.textContent = profile.icon || iconFor(profile.service);
+
+        const info = document.createElement("div");
+        info.className = "service-info";
+
+        const service = document.createElement("h3");
+        service.textContent = profile.service;
+
+        const username = document.createElement("p");
+        username.textContent = profile.username;
+
+        info.append(service, username);
+        top.append(icon, info);
+
+        const urlText = document.createElement("div");
+        urlText.className = "profile-url";
+        urlText.textContent = profile.url;
+
+        const actions = document.createElement("div");
+        actions.className = "card-actions";
+
+        const open = document.createElement("a");
+        open.className = "open-link";
+        open.href = profile.url;
+        open.target = "_blank";
+        open.rel = "noopener noreferrer";
+        open.textContent = "Open ↗";
+
+        const remove = document.createElement("button");
+        remove.className = "remove-button";
+        remove.type = "button";
+        remove.textContent = "Remove";
+        remove.addEventListener("click", () => {
+          if (!confirm(`Remove ${profile.service} from your directory?`)) return;
+          profiles = profiles.filter(item => item.id !== profile.id);
+          saveProfiles();
+          renderProfiles();
+        });
+
+        actions.append(open, remove);
+        card.append(top, urlText, actions);
+        serviceGrid.appendChild(card);
+      });
+    }
+
+    authForm.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const email = emailInput.value.trim().toLowerCase();
+      const password = passwordInput.value;
+      const users = readUsers();
+
+      authMessage.textContent = "";
+
+      if (password.length < 8) {
+        authMessage.textContent = "For this demo, use a password with at least 8 characters.";
+        return;
+      }
+
+      if (authMode === "signup") {
+        const name = displayNameInput.value.trim();
+
+        if (!name) {
+          authMessage.textContent = "Enter your name to create an account.";
+          return;
+        }
+
+        if (users.some(user => user.email === email)) {
+          authMessage.textContent = "That email already has a demo account. Try logging in.";
+          return;
+        }
+
+        const user = { name, email, password };
+        users.push(user);
+
+        try {
+          localStorage.setItem(USERS_KEY, JSON.stringify(users));
+          localStorage.setItem(SESSION_KEY, email);
+        } catch {
+          authMessage.textContent = "Browser storage is unavailable; the demo account could not be saved.";
+          return;
+        }
+
+        enterPoison(user);
+        return;
+      }
+
+      const user = users.find(item => item.email === email && item.password === password);
+
+      if (!user) {
+        authMessage.textContent = "Email or password is incorrect. Demo accounts are saved in this browser.";
+        return;
+      }
+
+      try {
+        localStorage.setItem(SESSION_KEY, email);
+      } catch {
+        // Continue for this page view if local storage is unavailable.
+      }
+
+      enterPoison(user);
+    });
+
+    document.getElementById("loginTab").addEventListener("click", () => setAuthMode("login"));
+    document.getElementById("signupTab").addEventListener("click", () => setAuthMode("signup"));
+    document.getElementById("logoutButton").addEventListener("click", logOut);
+
+    document.getElementById("addProfileButton").addEventListener("click", () => {
+      profileForm.reset();
+      document.getElementById("profileError").textContent = "";
+      profileDialog.showModal();
+      document.getElementById("serviceName").focus();
+    });
+
+    function closeProfileDialog() {
+      profileDialog.close();
+      profileForm.reset();
+    }
+
+    document.getElementById("closeDialogButton").addEventListener("click", closeProfileDialog);
+    document.getElementById("cancelDialogButton").addEventListener("click", closeProfileDialog);
+
+    profileDialog.addEventListener("click", event => {
+      if (event.target === profileDialog) closeProfileDialog();
+    });
+
+    profileForm.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const service = profileForm.elements.serviceName.value.trim();
+      const username = profileForm.elements.username.value.trim();
+      const url = safeHttpUrl(profileForm.elements.profileUrl.value.trim());
+
+      if (!service || !username || !url) {
+        document.getElementById("profileError").textContent =
+          "Enter a service, username, and valid http:// or https:// URL.";
+        return;
+      }
+
+      profiles.unshift({
+        id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        service,
+        username,
+        url,
+        icon: iconFor(service)
+      });
+
+      saveProfiles();
+      renderProfiles();
+      closeProfileDialog();
+    });
+
+    searchInput.addEventListener("input", renderProfiles);
+
+    document.getElementById("logoutButton").addEventListener("click", logOut);
+
+    // Restore the demo session on reload.
+    try {
+      const sessionEmail = localStorage.getItem(SESSION_KEY);
+      const user = readUsers().find(item => item.email === sessionEmail);
+      if (user) enterPoison(user);
+    } catch {
+      // Show the login page if browser storage is unavailable.
+    }
+  </script>
+</body>
+</html>
+``
